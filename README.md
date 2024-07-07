@@ -4,30 +4,13 @@
 [![](https://img.shields.io/badge/version-2.0-brightgreen.svg)](https://github.com/Exrick/xpay)
 [![GitHub stars](https://img.shields.io/github/stars/Exrick/xpay.svg?style=social&label=Stars)](https://github.com/Exrick/xpay)
 [![GitHub forks](https://img.shields.io/github/forks/Exrick/xpay.svg?style=social&label=Fork)](https://github.com/Exrick/xpay)
-> 当前开源版本v2.0 [点我获取最新源码及文档v3.1](http://xpay.exrick.cn/pay)
+> 当前开源版本v2.0，最新版本3.1在dev分支
 ### [宣传视频](https://www.bilibili.com/video/av23121122/)
 - 作者亲自制作 [点我观看](https://www.bilibili.com/video/av23121122/)
 ### 项目已部署，在线Demo
 - 本项目运行后效果：http://xpay.exrick.cn
 - 本项目Swagger接口文档：http://xpay.exrick.cn/swagger-ui.html
 - 实际综合应用商城项目：http://xmall.exrick.cn/
-
-### v3.1版本已发布！支付宝微信官方接口 自动回调！[立即获取源码和文档](http://xpay.exrick.cn/pay)
-- v3.1 新增微信支付官方接口 自动回调 提供个人申请教程(需一定开通成本)
-- v3.0 新增支付宝当面付 官方接口 自动回调 提供个人申请教程
-- v2.0 支付宝新增扫码点单收款，暂无风控，支持一键打开支付宝APP
-- v1.9 新增云闪付收款【**国外可用 收款直达银行卡**】，支付宝新增一键红包支付模式
-- v1.8 支付宝新增多种支付方式(含银行转账) v1.7 支付宝无法修改金额备注 新增支付宝扫码检测
-- v1.6 支付宝使用转账码方案 v1.5 解决近期支付宝史上最严风控问题 v1.3 实现轮询回调
-- 实现订单支付标识 解决无法识别支付人问题
-- ~~实现一键打开支付宝APP支付(支持安卓浏览器、IOS应用，不支持微信中打开)~~（支付宝已封禁）
-- 实现移动端支付方案 支持H5、APP、小程序
-- 轻松支持多账户收款 赶快使用手机扫码体验吧
-
-    ![](http://xpay.exrick.cn/assets/images/mobiletest.png)
-
-#### 注：v3.1源码（含详细文档）获取方式 
-- 进入 [XPay官网](http://xpay.exrick.cn/pay) 成功支付测试后 将自动发至你所填写的邮箱中
 
 ### 声明
 > 此系统只针对个人开发收款支付，实际可应用到实现~~自动维护捐赠表等业务，无法商用~~！最新版本可已实现充值、发卡、发货等业务，可勉强供真正个人商用！日入百万千万的请绕道！当然你还可将此项目当作入门级的SpringBoot练习项目
