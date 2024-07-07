@@ -84,7 +84,7 @@
     </div>
     <div class="mui-input-row">
         <label>状态</label>
-        <input type="text" id="state" class="mui-input-clear" placeholder="" disabled>
+        <input type="text" id="state" placeholder="" disabled>
     </div>
     <div class="mui-button-row">
         <button type="button" class="mui-btn mui-btn-my" onclick="confirm()">确认修改</button>
@@ -131,6 +131,7 @@
                 $("#info").val(data.result.info);
                 $("#payType").val(data.result.payType);
                 $("#time").val(data.result.time);
+                $("#email").val(data.result.email);
                 time=data.result.time;
                 var state=data.result.state;
                 if(state==0){
@@ -146,8 +147,17 @@
                 }else{
                     $("#state").val('其他态');
                 }
-
-                $("#email").val(data.result.email);
+                var status=data.result.status;
+                if(status==0){
+                    $("#status").val('待办理');
+                }else if(status==1){
+                    $("#status").val('办理成功');
+                }else if(status==2){
+                    $("#state").val('办理失败');
+                }
+                if(data.result.money=="68"||data.result.money=="68.00"||data.result.money==68){
+                    $("#dmfInfo").css('display','block');
+                }
             }else{
                 message(data.message);
             }

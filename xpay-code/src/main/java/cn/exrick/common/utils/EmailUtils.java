@@ -70,7 +70,7 @@ public class EmailUtils {
     public static boolean checkEmail(String email) {
         boolean flag = false;
         try {
-            String check = "^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+            String check = "^\\w+@[a-zA-Z0-9]{2,10}(?:\\.[a-z]{2,4}){1,3}$";
             Pattern regex = Pattern.compile(check);
             Matcher matcher = regex.matcher(email);
             flag = matcher.matches();

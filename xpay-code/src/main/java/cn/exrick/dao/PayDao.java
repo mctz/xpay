@@ -17,6 +17,8 @@ public interface PayDao extends JpaRepository<Pay,String>, JpaSpecificationExecu
 
     List<Pay> getByStateIs(Integer state);
 
+    List<Pay> getByStateAndPayType(Integer state, String type);
+
     @Query(value = "select sum(money) from t_pay where state = 1",nativeQuery = true)
     BigDecimal countAllMoney();
 
@@ -28,4 +30,6 @@ public interface PayDao extends JpaRepository<Pay,String>, JpaSpecificationExecu
 
     @Query(value = "select sum(money) from t_pay where state = 1 and pay_type = ?1 and create_time between ?2 and ?3",nativeQuery = true)
     BigDecimal countMoneyByType(String payType, Date date1, Date date2);
+
+    void deleteByMoneyLessThanAndState(BigDecimal money, Integer state);
 }

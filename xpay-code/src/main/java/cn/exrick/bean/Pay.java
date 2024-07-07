@@ -1,5 +1,7 @@
 package cn.exrick.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -89,39 +91,45 @@ public class Pay implements Serializable{
     private String time;
 
     @Transient
+    @JsonIgnore
     private String passUrl;
 
     /**
      * 含小程序
      */
     @Transient
+    @JsonIgnore
     private String passUrl2;
 
     /**
      * 含xboot
      */
     @Transient
+    @JsonIgnore
     private String passUrl3;
 
     @Transient
+    @JsonIgnore
     private String backUrl;
 
     @Transient
+    @JsonIgnore
     private String passNotShowUrl;
 
     @Transient
+    @JsonIgnore
     private String editUrl;
 
     @Transient
+    @JsonIgnore
     private String delUrl;
 
     @Transient
+    @JsonIgnore
     private String closeUrl;
 
     @Transient
-    private String openUrl;
-
-    @Transient
+    @JsonIgnore
     private String statistic;
 
     public String getStatistic() {
@@ -146,14 +154,6 @@ public class Pay implements Serializable{
 
     public void setCloseUrl(String closeUrl) {
         this.closeUrl = closeUrl;
-    }
-
-    public String getOpenUrl() {
-        return openUrl;
-    }
-
-    public void setOpenUrl(String openUrl) {
-        this.openUrl = openUrl;
     }
 
     public String getDevice() {

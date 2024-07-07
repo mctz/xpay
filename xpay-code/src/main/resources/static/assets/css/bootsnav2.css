@@ -997,6 +997,10 @@ body.on-side .wrap-sticky nav.navbar.bootsnav.sticked{
         float: none !important;
         margin: 0 !important;
     }
+
+    .footer-menu .navbar-brand {
+        padding: 20px 0;
+    }
     
     nav.navbar.bootsnav .navbar-header {
         float: none;
@@ -1473,3 +1477,14 @@ body.on-side .wrap-sticky nav.navbar.bootsnav.sticked{
         padding-bottom: 30px;
     }
 }
+
+@media (min-width: 768px) {
+    .navbar-nav > li > a {
+        padding: 30px 15px;
+        font-weight: 600;
+    }
+    nav.navbar.bootsnav.navbar-fixed.navbar-transparent .logo-scrolled, nav.navbar.bootsnav.navbar-fixed.no-background .logo-scrolled {
+        display: none;
+    }
+}
+

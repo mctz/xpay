@@ -150,6 +150,7 @@
 .form-group {
   margin-bottom: 15px;
   overflow: hidden;
+  width: 101%;
 }
 
 .form-control {

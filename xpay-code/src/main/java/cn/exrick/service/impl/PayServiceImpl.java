@@ -93,7 +93,7 @@ public class PayServiceImpl implements PayService {
     @Override
     public int addPay(Pay pay) {
 
-        pay.setId(UUID.randomUUID().toString());
+        pay.setId(UUID.randomUUID().toString().replace("-",""));
         pay.setCreateTime(new Date());
         pay.setState(0);
         payDao.save(pay);
@@ -132,6 +132,8 @@ public class PayServiceImpl implements PayService {
         if(type==-1){
             // 总
             count.setAmount(payDao.countAllMoney());
+            count.setDmf(payDao.countAllMoneyByType("DMF"));
+            count.setWeixin(payDao.countAllMoneyByType("Wechat(Official)"));
             count.setAlipay(payDao.countAllMoneyByType("Alipay"));
             count.setWechat(payDao.countAllMoneyByType("Wechat"));
             count.setQq(payDao.countAllMoneyByType("QQ"));
@@ -174,6 +176,8 @@ public class PayServiceImpl implements PayService {
             endDate = DateUtils.parseEndDate(end);
         }
         count.setAmount(payDao.countMoney(startDate, endDate));
+        count.setDmf(payDao.countMoneyByType("DMF", startDate, endDate));
+        count.setWeixin(payDao.countMoneyByType("Wechat(Official)", startDate, endDate));
         count.setAlipay(payDao.countMoneyByType("Alipay", startDate, endDate));
         count.setWechat(payDao.countMoneyByType("Wechat", startDate, endDate));
         count.setQq(payDao.countMoneyByType("QQ", startDate, endDate));

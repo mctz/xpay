@@ -94,6 +94,7 @@
                                     <div class="box-inner order-info" >
                                         <img class="wechat" src="/assets/images/diandan.png" alt="扫一扫标识">
                                         <p class="payment-detail">扫一扫付款（元）</p>
+                                        <p class="payment-money" id="money1"></p>
                                         <div class="img-box" style="flex-direction: column;">
                                             <img class="pic" id="qr-pic"
                                                  src="" alt="加载失败" width="168px"
@@ -118,6 +119,7 @@
                                         <span>
               
                                         </span>
+                                        <em><span>¥</span><em id="money2"></em></em>
                                         <input type="text" class="disabled-btn" id="confirm" onclick="confirm()" value="等待支付..." readonly style="margin-right:15px">
                                       </div>
                                     </div>
@@ -152,14 +154,16 @@
 
         </div>
 
+        <!-- JS includes -->
 
+        <!--<script src="assets/js/vendor/jquery-1.11.2.min.js"></script>-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
+        <!--<script src="assets/js/vendor/bootstrap.min.js"></script>-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-
+        <!--<script src="assets/js/jquery.magnific-popup.js"></script>-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.1/jquery.magnific-popup.min.js"></script>
-
+        <!--<script src="assets/js/jquery.easing.1.3.js"></script>-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.compatibility.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.0/js/swiper.jquery.min.js"></script>
         <script src="assets/js/jquery.collapse.js"></script>
@@ -204,6 +208,9 @@
         if(money==""||money==null){
             window.location.href="/";
         }
+        $("#money1").html(Number(money).toFixed(2));
+        $("#money2").html(Number(money).toFixed(2));
+
         var picName = $.cookie('picName');
         // 获取num
         var num  = $.cookie('payNum');
@@ -296,7 +303,7 @@
                         }else{
                             setTimeout(function () {
                                 judgeState();
-                            }, 1000)
+                            }, 3000)
                         }
                     }
                 }

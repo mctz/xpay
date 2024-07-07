@@ -4,7 +4,7 @@
 [![](https://img.shields.io/badge/version-2.0-brightgreen.svg)](https://github.com/Exrick/xpay)
 [![GitHub stars](https://img.shields.io/github/stars/Exrick/xpay.svg?style=social&label=Stars)](https://github.com/Exrick/xpay)
 [![GitHub forks](https://img.shields.io/github/forks/Exrick/xpay.svg?style=social&label=Fork)](https://github.com/Exrick/xpay)
-> 当前开源版本v2.0，最新版本3.1在dev分支
+> 当前开源版本最新版本3.1
 ### [宣传视频](https://www.bilibili.com/video/av23121122/)
 - 作者亲自制作 [点我观看](https://www.bilibili.com/video/av23121122/)
 ### 项目已部署，在线Demo

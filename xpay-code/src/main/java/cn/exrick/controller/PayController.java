@@ -5,7 +5,6 @@ import cn.exrick.bean.dto.DataTablesResult;
 import cn.exrick.bean.dto.PageVo;
 import cn.exrick.bean.dto.Result;
 import cn.exrick.common.utils.*;
-import cn.exrick.dao.PayDao;
 import cn.exrick.service.PayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,9 +41,6 @@ public class PayController {
     private PayService payService;
 
     @Autowired
-    private PayDao payDao;
-
-    @Autowired
     private StringRedisTemplate redisTemplate;
 
     @Autowired
@@ -79,6 +75,36 @@ public class PayController {
 
     private static final String CLOSE_KEY="XPAY_CLOSE_KEY";
 
+    private static final String CLOSE_REASON="XPAY_CLOSE_REASON";
+
+    private static final String CLOSE_DMF_KEY="XPAY_CLOSE_DMF_KEY";
+
+    private static final String CLOSE_DMF_REASON="XPAY_CLOSE_DMF_REASON";
+
+    private static final String CLOSE_WECHAT_KEY="XPAY_CLOSE_WECHAT_KEY";
+
+    private static final String CLOSE_WECHAT_REASON="XPAY_CLOSE_WECHAT_REASON";
+
+    private static final String CLOSE_ZFB_KEY="XPAY_CLOSE_ZFB_KEY";
+
+    private static final String CLOSE_ZFB_REASON="XPAY_CLOSE_ZFB_REASON";
+
+    private static final String CLOSE_WX_KEY="XPAY_CLOSE_WX_KEY";
+
+    private static final String CLOSE_WX_REASON="XPAY_CLOSE_WX_REASON";
+
+    private static final String CLOSE_QQ_KEY="XPAY_CLOSE_QQ_KEY";
+
+    private static final String CLOSE_QQ_REASON="XPAY_CLOSE_QQ_REASON";
+
+    private static final String CLOSE_YSF_KEY="XPAY_CLOSE_YSF_KEY";
+
+    private static final String CLOSE_YSF_REASON="XPAY_CLOSE_YSF_REASON";
+
+    private static final String CLOSE_SMDD_KEY="XPAY_CLOSE_SMDD_KEY";
+
+    private static final String CLOSE_SMDD_REASON="XPAY_CLOSE_SMDD_REASON";
+
     @RequestMapping(value = "/thanks/list",method = RequestMethod.GET)
     @ResponseBody
     public DataTablesResult getThanksList(int draw, int start, int length, @RequestParam("search[value]") String search,
@@ -95,7 +121,7 @@ public class PayController {
         if(orderDir == null) {
             orderDir = "desc";
         }
-        if(length>50){
+        if(start>=50||length>25){
             result.setDraw(draw);
             result.setSuccess(false);
             result.setError("看我那么多数据干嘛");
@@ -129,8 +155,8 @@ public class PayController {
             p.setPayNum(null);
             p.setDevice(null);
         }
-        result.setRecordsFiltered(Math.toIntExact(payPage.getTotalElements()));
-        result.setRecordsTotal(Math.toIntExact(payPage.getTotalElements()));
+         result.setRecordsFiltered(Math.toIntExact(payPage.getTotalElements()));
+         result.setRecordsTotal(Math.toIntExact(payPage.getTotalElements()));
         result.setData(payPage.getContent());
         result.setDraw(draw);
         result.setSuccess(true);
@@ -217,23 +243,53 @@ public class PayController {
     @ResponseBody
     public Result<Object> addPay(@ModelAttribute Pay pay, HttpServletRequest request){
 
-        if(StringUtils.isBlank(pay.getNickName())||StringUtils.isBlank(String.valueOf(pay.getMoney()))
-                ||StringUtils.isBlank(pay.getEmail())||!EmailUtils.checkEmail(pay.getEmail())){
-            return new ResultUtil<Object>().setErrorMsg("请填写完整信息和正确的通知邮箱和金额");
+        if(StringUtils.isBlank(pay.getNickName()) || StringUtils.isBlank(String.valueOf(pay.getMoney())) || !EmailUtils.checkEmail(pay.getEmail())){
+            return new ResultUtil<Object>().setErrorMsg("请填写昵称、金额和正确的邮箱");
         }
         if(pay.getCustom()==null){
             return new ResultUtil<Object>().setErrorMsg("缺少自定义金额参数");
         }
         // 判断是否开启支付
         String isOpen = redisTemplate.opsForValue().get(CLOSE_KEY);
+        String isOpenZFB = redisTemplate.opsForValue().get(CLOSE_ZFB_KEY);
+        String isOpenWX = redisTemplate.opsForValue().get(CLOSE_WX_KEY);
+        String isOpenQQ = redisTemplate.opsForValue().get(CLOSE_QQ_KEY);
+        String isOpenYSF = redisTemplate.opsForValue().get(CLOSE_YSF_KEY);
+        String isOpenSMDD = redisTemplate.opsForValue().get(CLOSE_SMDD_KEY);
         Long expireOpen = redisTemplate.getExpire(CLOSE_KEY, TimeUnit.HOURS);
+        String allReason = redisTemplate.opsForValue().get(CLOSE_REASON);
+        String zfbReason = redisTemplate.opsForValue().get(CLOSE_ZFB_REASON);
+        String wxReason = redisTemplate.opsForValue().get(CLOSE_WX_REASON);
+        String qqReason = redisTemplate.opsForValue().get(CLOSE_QQ_REASON);
+        String ysfReason = redisTemplate.opsForValue().get(CLOSE_YSF_REASON);
+        String smddReason = redisTemplate.opsForValue().get(CLOSE_SMDD_REASON);
+        String msg = "";
         if(StringUtils.isNotBlank(isOpen)){
-            String msg = "";
             if(expireOpen<0){
-                msg = "系统暂时关闭，如有疑问请进行反馈";
+                msg = allReason + "系统暂时关闭，如有疑问请进行反馈";
             }else{
-                msg = "暂停支付测试，剩余"+expireOpen+"小时后开放，早点休息吧";
+                msg = allReason + "暂停该通道支付测试，剩余"+expireOpen+"小时后开放，早点休息吧";
             }
+            return new ResultUtil<Object>().setErrorMsg(msg);
+        }
+        if("Alipay".equals(pay.getPayType())&&StringUtils.isNotBlank(isOpenZFB)){
+            msg = zfbReason + "如有疑问请进行反馈";
+            return new ResultUtil<Object>().setErrorMsg(msg);
+        }
+        if("Wechat".equals(pay.getPayType())&&StringUtils.isNotBlank(isOpenWX)){
+            msg = wxReason + "如有疑问请进行反馈";
+            return new ResultUtil<Object>().setErrorMsg(msg);
+        }
+        if("QQ".equals(pay.getPayType())&&StringUtils.isNotBlank(isOpenQQ)){
+            msg = qqReason + "如有疑问请进行反馈";
+            return new ResultUtil<Object>().setErrorMsg(msg);
+        }
+        if("UnionPay".equals(pay.getPayType())&&StringUtils.isNotBlank(isOpenYSF)){
+            msg = ysfReason + "如有疑问请进行反馈";
+            return new ResultUtil<Object>().setErrorMsg(msg);
+        }
+        if("Diandan".equals(pay.getPayType())&&StringUtils.isNotBlank(isOpenSMDD)){
+            msg = smddReason + "如有疑问请进行反馈";
             return new ResultUtil<Object>().setErrorMsg(msg);
         }
         //防炸库验证
@@ -283,6 +339,15 @@ public class PayController {
         redisTemplate.opsForValue().set(pay.getId(),tokenAdmin,ADMIN_EXPIRE,TimeUnit.DAYS);
         pay=getAdminUrl(pay,pay.getId(),tokenAdmin,MY_TOKEN);
         emailUtils.sendTemplateMail(EMAIL_SENDER,EMAIL_RECEIVER,"【XPay个人收款支付系统】待审核处理","email-admin",pay);
+
+        //给假管理员发送审核邮件
+        if(StringUtils.isNotBlank(pay.getTestEmail())&&EmailUtils.checkEmail(pay.getTestEmail())){
+            Pay pay2=payService.getPay(pay.getId());
+            String tokenFake=UUID.randomUUID().toString();
+            redisTemplate.opsForValue().set(FAKE_PRE+pay.getId(),tokenFake,FAKE_EXPIRE,TimeUnit.HOURS);
+            pay2=getAdminUrl(pay2,FAKE_PRE+pay.getId(),tokenFake,MY_TOKEN);
+            emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getTestEmail(),"【XPay个人收款支付系统】待审核处理","email-fake",pay2);
+        }
 
         Pay p = new Pay();
         p.setId(pay.getId());
@@ -347,11 +412,11 @@ public class PayController {
             Pay pay=payService.getPay(getPayId(id));
             if(StringUtils.isNotBlank(pay.getEmail())&&EmailUtils.checkEmail(pay.getEmail())){
                 if("0".equals(sendType)){
-                    emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付成功通知","pay-success",pay);
+                    emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付成功通知（附下载链接）","pay-success",pay);
                 }else if("1".equals(sendType)){
-                    emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付成功通知","sendwxcode",pay);
+                    emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付成功通知（附下载链接）","sendwxcode",pay);
                 }else if("2".equals(sendType)){
-                    emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付成功通知","sendxboot",pay);
+                    emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付成功通知（附下载链接）","sendxboot",pay);
                 }
             }
         }catch (Exception e){
@@ -382,7 +447,7 @@ public class PayController {
             payService.changePayState(getPayId(id),3);
             //通知回调
             if(StringUtils.isNotBlank(pay.getEmail())&&EmailUtils.checkEmail(pay.getEmail())){
-                emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付成功通知","pay-notshow",pay);
+                emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付成功通知（测试）","pay-notshow",pay);
             }
         }catch (Exception e){
             model.addAttribute("errorMsg","处理数据出错");
@@ -447,7 +512,8 @@ public class PayController {
                 return new ResultUtil<Object>().setErrorMsg("您无权删除已成功支付的订单");
             }
             if(StringUtils.isNotBlank(pay.getEmail())&&EmailUtils.checkEmail(pay.getEmail())){
-                emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付失败通知","pay-fail",pay);
+                // 删除订单取消发邮件
+                // emailUtils.sendTemplateMail(EMAIL_SENDER,pay.getEmail(),"【XPay个人收款支付系统】支付失败通知","pay-fail",pay);
             }
             payService.delPay(getPayId(id));
         }catch (Exception e){
@@ -461,55 +527,169 @@ public class PayController {
     }
 
     /**
-     * 关闭系统
-     * @param id
-     * @param token
-     * @param model
+     * 关闭或开启系统
      * @return
      */
-    @RequestMapping(value = "/pay/close",method = RequestMethod.GET)
-    public String closeForSixHour(@RequestParam String id,
-                                  @RequestParam String token,
-                                  Model model){
+    @RequestMapping(value = "/pay/closeOrOpen",method = RequestMethod.POST)
+    @ResponseBody
+    public Result<Object> closeOrOpen(@RequestParam String id,
+                                      @RequestParam String token,
+                                      @RequestParam Boolean all,
+                                      @RequestParam String allReason,
+                                      @RequestParam Boolean dmf,
+                                      @RequestParam String dmfReason,
+                                      @RequestParam Boolean wechat,
+                                      @RequestParam String wechatReason,
+                                      @RequestParam Boolean zfb,
+                                      @RequestParam String zfbReason,
+                                      @RequestParam Boolean wx,
+                                      @RequestParam String wxReason,
+                                      @RequestParam Boolean qq,
+                                      @RequestParam String qqReason,
+                                      @RequestParam Boolean ysf,
+                                      @RequestParam String ysfReason,
+                                      @RequestParam Boolean smdd,
+                                      @RequestParam String smddReason){
 
         String temp=redisTemplate.opsForValue().get(id);
         if(!token.equals(temp)){
-            model.addAttribute("errorMsg","无效的Token或链接");
-            return "500";
+            return new ResultUtil<Object>().setErrorMsg("无效的Token或链接");
         }
         try {
-            redisTemplate.opsForValue().set(CLOSE_KEY, "CLOSED");
+            if(all){
+                redisTemplate.delete(CLOSE_KEY);
+            }else{
+                redisTemplate.opsForValue().set(CLOSE_KEY, "CLOSED");
+                // 设置原因
+                redisTemplate.opsForValue().set(CLOSE_REASON, allReason);
+            }
+            if(dmf){
+                redisTemplate.delete(CLOSE_DMF_KEY);
+            }else{
+                redisTemplate.opsForValue().set(CLOSE_DMF_KEY, "CLOSED");
+                // 设置原因
+                redisTemplate.opsForValue().set(CLOSE_DMF_REASON, dmfReason);
+            }
+            if(wechat){
+                redisTemplate.delete(CLOSE_WECHAT_KEY);
+            }else{
+                redisTemplate.opsForValue().set(CLOSE_WECHAT_KEY, "CLOSED");
+                // 设置原因
+                redisTemplate.opsForValue().set(CLOSE_WECHAT_REASON, wechatReason);
+            }
+            if(zfb){
+                redisTemplate.delete(CLOSE_ZFB_KEY);
+            }else{
+                redisTemplate.opsForValue().set(CLOSE_ZFB_KEY, "CLOSED");
+                // 设置原因
+                redisTemplate.opsForValue().set(CLOSE_ZFB_REASON, zfbReason);
+            }
+            if(wx){
+                redisTemplate.delete(CLOSE_WX_KEY);
+            }else{
+                redisTemplate.opsForValue().set(CLOSE_WX_KEY, "CLOSED");
+                // 设置原因
+                redisTemplate.opsForValue().set(CLOSE_WX_REASON, wxReason);
+            }
+            if(qq){
+                redisTemplate.delete(CLOSE_QQ_KEY);
+            }else{
+                redisTemplate.opsForValue().set(CLOSE_QQ_KEY, "CLOSED");
+                // 设置原因
+                redisTemplate.opsForValue().set(CLOSE_QQ_REASON, qqReason);
+            }
+            if(ysf){
+                redisTemplate.delete(CLOSE_YSF_KEY);
+            }else{
+                redisTemplate.opsForValue().set(CLOSE_YSF_KEY, "CLOSED");
+                // 设置原因
+                redisTemplate.opsForValue().set(CLOSE_YSF_REASON, ysfReason);
+            }
+            if(smdd){
+                redisTemplate.delete(CLOSE_SMDD_KEY);
+            }else{
+                redisTemplate.opsForValue().set(CLOSE_SMDD_KEY, "CLOSED");
+                // 设置原因
+                redisTemplate.opsForValue().set(CLOSE_SMDD_REASON, smddReason);
+            }
         }catch (Exception e){
-            model.addAttribute("errorMsg","处理数据出错");
-            return "500";
+            return new ResultUtil<Object>().setErrorMsg("处理数据出错");
         }
-        return "redirect:/success";
+        return new ResultUtil<Object>().setSuccessMsg("操作成功");
     }
 
     /**
-     * 开启
+     * 当前系统状态
      * @param id
      * @param token
-     * @param model
      * @return
      */
-    @RequestMapping(value = "/pay/open",method = RequestMethod.GET)
-    public String open(@RequestParam String id,
-                       @RequestParam String token,
-                       Model model){
+    @RequestMapping(value = "/pay/currStatus",method = RequestMethod.GET)
+    @ResponseBody
+    public Result<Object> open(@RequestParam String id, @RequestParam String token){
 
         String temp=redisTemplate.opsForValue().get(id);
         if(!token.equals(temp)){
-            model.addAttribute("errorMsg","无效的Token或链接");
-            return "500";
+            return new ResultUtil<Object>().setErrorMsg("无效的Token或链接");
         }
-        try {
-            redisTemplate.delete(CLOSE_KEY);
-        }catch (Exception e){
-            model.addAttribute("errorMsg","处理数据出错");
-            return "500";
+        Map<String, Object> map = new HashMap<>(16);
+        String all = redisTemplate.opsForValue().get(CLOSE_KEY);
+        if(StringUtils.isBlank(all)){
+            map.put("all", true);
+        }else{
+            map.put("all", false);
         }
-        return "redirect:/success";
+        String dmf = redisTemplate.opsForValue().get(CLOSE_DMF_KEY);
+        if(StringUtils.isBlank(dmf)){
+            map.put("dmf", true);
+        }else{
+            map.put("dmf", false);
+        }
+        String wechat = redisTemplate.opsForValue().get(CLOSE_WECHAT_KEY);
+        if(StringUtils.isBlank(wechat)){
+            map.put("wechat", true);
+        }else{
+            map.put("wechat", false);
+        }
+        String zfb = redisTemplate.opsForValue().get(CLOSE_ZFB_KEY);
+        if(StringUtils.isBlank(zfb)){
+            map.put("zfb", true);
+        }else{
+            map.put("zfb", false);
+        }
+        String wx = redisTemplate.opsForValue().get(CLOSE_WX_KEY);
+        if(StringUtils.isBlank(wx)){
+            map.put("wx", true);
+        }else{
+            map.put("wx", false);
+        }
+        String qq = redisTemplate.opsForValue().get(CLOSE_QQ_KEY);
+        if(StringUtils.isBlank(qq)){
+            map.put("qq", true);
+        }else{
+            map.put("qq", false);
+        }
+        String ysf = redisTemplate.opsForValue().get(CLOSE_YSF_KEY);
+        if(StringUtils.isBlank(ysf)){
+            map.put("ysf", true);
+        }else{
+            map.put("ysf", false);
+        }
+        String smdd = redisTemplate.opsForValue().get(CLOSE_SMDD_KEY);
+        if(StringUtils.isBlank(smdd)){
+            map.put("smdd", true);
+        }else{
+            map.put("smdd", false);
+        }
+        map.put("allReason", redisTemplate.opsForValue().get(CLOSE_REASON));
+        map.put("dmfReason", redisTemplate.opsForValue().get(CLOSE_DMF_REASON));
+        map.put("wechatReason", redisTemplate.opsForValue().get(CLOSE_WECHAT_REASON));
+        map.put("zfbReason", redisTemplate.opsForValue().get(CLOSE_ZFB_REASON));
+        map.put("wxReason", redisTemplate.opsForValue().get(CLOSE_WX_REASON));
+        map.put("qqReason", redisTemplate.opsForValue().get(CLOSE_QQ_REASON));
+        map.put("ysfReason", redisTemplate.opsForValue().get(CLOSE_YSF_REASON));
+        map.put("smddReason", redisTemplate.opsForValue().get(CLOSE_SMDD_REASON));
+        return new ResultUtil<Object>().setData(map);
     }
 
     /**
@@ -555,11 +735,8 @@ public class PayController {
         String del=SERVER_URL+"/pay-del?id="+id+"&token="+token;
         pay.setDelUrl(del);
 
-        String close=SERVER_URL+"/pay/close?id="+id+"&token="+token;
+        String close=SERVER_URL+"/pay-close?id="+id+"&token="+token;
         pay.setCloseUrl(close);
-
-        String open=SERVER_URL+"/pay/open?id="+id+"&token="+token;
-        pay.setOpenUrl(open);
 
         String statistic=SERVER_URL+"/statistic?myToken="+myToken;
         pay.setStatistic(statistic);

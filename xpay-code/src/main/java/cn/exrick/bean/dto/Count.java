@@ -6,6 +6,8 @@ public class Count {
 
     private BigDecimal amount = new BigDecimal("0.00");
 
+    private BigDecimal weixin = new BigDecimal("0.00");
+
     private BigDecimal alipay = new BigDecimal("0.00");
 
     private BigDecimal wechat = new BigDecimal("0.00");
@@ -15,6 +17,24 @@ public class Count {
     private BigDecimal union = new BigDecimal("0.00");
 
     private BigDecimal diandan = new BigDecimal("0.00");
+
+    private BigDecimal dmf = new BigDecimal("0.00");
+
+    public BigDecimal getWeixin() {
+        return weixin;
+    }
+
+    public void setWeixin(BigDecimal weixin) {
+        this.weixin = weixin;
+    }
+
+    public BigDecimal getDmf() {
+        return dmf;
+    }
+
+    public void setDmf(BigDecimal dmf) {
+        this.dmf = dmf;
+    }
 
     public BigDecimal getDiandan() {
         return diandan;

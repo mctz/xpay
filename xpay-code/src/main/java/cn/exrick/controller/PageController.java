@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,9 @@ public class PageController {
     public String showPage(@PathVariable String page,
                            HttpServletRequest request){
 
+        if(page.contains("pay-success")||page.contains("sendwxcode")||page.contains("sendxboot")){
+            return "index";
+        }
         String id = request.getParameter("id");
         if("openAlipay".equals(page)&&StringUtils.isNotBlank(id)){
             // 已扫码状态
