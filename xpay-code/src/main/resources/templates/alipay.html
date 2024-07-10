@@ -38,7 +38,7 @@
     <!--<script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>-->
     <!--<script src="https://cdn.bootcss.com/modernizr/2.8.2/modernizr.min.js"></script>-->
 
-    <!-- Hotjar Tracking Code for http://msl1214.gnway.cc/ -->
+    <!-- Hotjar Tracking Code for http://msl1214.iok.la/ -->
     <script>
         (function (h, o, t, j, a, r) {
             h.hj = h.hj || function () {
@@ -311,25 +311,10 @@
     // 获取num
     var num  = $.cookie('payNum');
 
-    // 从cookie中取金额文件夹
-    var picName = $.cookie('picName');
+    // 替换你的访问域名 v1.8-v2.0
+    var url = "alipays://platformapi/startapp?appId=20000067&url="+
+        encodeURIComponent("http://msl1214.iok.la/openAlipay?money="+money+"&num="+num+"&id="+$.cookie("payId"));
 
-    // 自定义金额二维码链接 v1.5只需配置该链接即可 如 HTTPS://QR.ALIPAY.COM/FKX07374CYKKXVVD3BPXED
-    //var custom = "https://qr.alipay.com/tsx03636i81bkyi32xnfpfb";
-
-    // 转账码 替换你的userId即可 可修改金额版本 v1.6
-    //var url = "alipays://platformapi/startapp?appId=09999988&actionType=toAccount&goBack=NO&userId=2088012242122163" +
-    //    "&amount=" + money + "&memo=" + num;
-
-    // 新转账码 不可修改金额备注 替换u为你的支付宝userId即可 v1.7
-    //var url = 'alipays://platformapi/startapp?appId=20000123&actionType=scan&biz_data=' +
-    //    '{"s": "money", "u": "2088012242122163", "a": "'+ money +'", "m": "'+ num +'"}';
-
-    // 替换你的访问域名msl1214.gnway.cc v1.8-v2.0
-    /*var url = "alipays://platformapi/startapp?appId=20000067&url="+
-        encodeURIComponent("http://msl1214.vicp.io/openAlipay?money="+money+"&num="+num+"&id="+$.cookie("payId"));*/
-    var url = "alipays://platformapi/startapp?appId=20000067&url="+ encodeURIComponent("http://msl1214.vicp.io/#/cashier");
-    
     function showTip() {
         $("#wx-tip").css("display","block");
     }
@@ -346,20 +331,6 @@
         width: 160,
         height: 160
     });
-
-//    var path="";
-//    if(picName==""||picName==null||picName=="null"||picName=="custom"){
-//        // 自定义金额显示需填写订单标识
-//        $(".payNum").html(num);
-//        //显示
-//        $("#showreamrk").css("display","block");
-//        //隐藏图片
-//        $(".qrguide-area").css("display","none");
-//    }else{
-//        // 获取num
-//        path="/assets/qr/alipay/"+picName+"/"+num+".png";
-//        $("#qr-pic").attr("src",path);
-//    }
 
     showRed();
 

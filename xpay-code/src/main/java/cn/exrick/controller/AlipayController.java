@@ -89,7 +89,7 @@ public class AlipayController {
     /**
      * 回调通知接口链接
      */
-    private static final String notifyUrl = "http://msl1214.gnway.cc/alipay/notify";
+    private static final String notifyUrl = "http://msl1214.iok.la/alipay/notify";
 
     /**
      * 生成二维码
